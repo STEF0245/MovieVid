@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+		<title><%= movie.title %></title>
+		<link href="/css/tailwind.css" rel="stylesheet" />
+	</head>
+
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+		<title><%= movie.title %></title>
+		<link href="/css/tailwind.css" rel="stylesheet" />
+		<style>
+			.video-loader {
+				border: 3px solid rgba(255, 255, 255, 0.1);
+				border-top: 3px solid #3b82f6;
+				border-radius: 50%;
+				width: 40px;
+				height: 40px;
+				animation: spin 1s linear infinite;
+			}
+			@keyframes spin {
+				0% { transform: rotate(0deg); }
+				100% { transform: rotate(360deg); }
+			}
+			.video-container {
+				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+			}
+			iframe.loading {
+				opacity: 0;
+			}
+			iframe.loaded {
+				opacity: 1;
+				transition: opacity 0.3s ease-in-out;
+			}
+		</style>
+	</head>
+
+	<body class="bg-gray-900 text-white">
+		<!-- Navbar -->
+		<%- include('components/NavBar') %>
+
+		<main class="pt-24 pb-12 px-4 max-w-7xl mx-auto">
+			<!-- Provider Selector -->
+			<div class="flex flex-wrap items-center justify-between gap-3 mb-4 bg-gray-800/50 p-4 rounded-lg border border-gray-700">
+				<div class="flex items-center gap-3">
+					<label for="providerSelect" class="text-sm font-medium text-gray-300">
+						<svg class="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
+						</svg>
+						Video Source
+					</label>
+					<select
+						id="providerSelect"
+						class="bg-gray-900 text-white text-sm rounded-md px-4 py-2 border border-gray-600 hover:border-blue-500 focus:border-blue-500 focus:outline-none transition-colors cursor-pointer"
+					>
+						<option value="">Loading providers...</option>
+					</select>
+				</div>
+				<div id="loadingIndicator" class="hidden flex items-center gap-2 text-xs text-gray-400">
+					<div class="video-loader"></div>
+					<span>Loading video...</span>
+				</div>
+			</div>
+
+			<!-- Video Player Container -->
+			<div class="relative w-full video-container rounded-lg overflow-hidden bg-black" style="padding-bottom: 56.25%">
+				<iframe
+					id="videoFrame"
+					class="absolute top-0 left-0 w-full h-full loading"
+					frameborder="0"
+					allowfullscreen
+					allow="autoplay; fullscreen; picture-in-picture; encrypted-media; accelerometer; gyroscope"
+					referrerpolicy="origin"
+				></iframe>
+				<div
+					id="videoMessage"
+					class="hidden absolute inset-0 bg-gradient-to-br from-gray-900 to-gray-800 text-gray-200 flex flex-col items-center justify-center text-center px-4"
+				>
+					<svg class="w-16 h-16 mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+					</svg>
+					<p class="text-lg font-medium">Video unavailable</p>
+					<p class="text-sm text-gray-400 mt-2">Please try another source or check back later</p>
+				</div>
+				<div id="loadingOverlay" class="absolute inset-0 bg-black flex items-center justify-center">
+					<div class="video-loader"></div>
+				</div>
+			</div>
+
+			<!-- Movie Info -->
+			<div class="mt-8 space-y-4">
+				<h1 class="text-4xl font-bold text-white"><%= movie.title %></h1>
+				<p class="text-gray-300 leading-relaxed max-w-4xl"><%= movie.description %></p>
+			</div>
+		</main>
+		<%- include('components/Footer') %>
+		<script>
+			const videoFrame = document.getElementById('videoFrame')
+			const videoMessage = document.getElementById('videoMessage')
+			const providerSelect = document.getElementById('providerSelect')
+			const rawType =
+				"<%= movie.titleType || movie.type || movie.title_type || '' %>"
+			const isSeries = rawType.toLowerCase().includes('series')
+			const seriesQuery = isSeries
+				? '?type=series&season=1&episode=1'
+				: ''
+			const sourceEndpoint =
+				'/videos/<%= movie.id %>/source' + seriesQuery
+
+			// Load available providers
+			async function loadProviders() {
+				try {
+					const res = await fetch('/videos/providers/list')
+					if (!res.ok) {
+						console.error('Failed to load providers')
+						return
+					}
+					const data = await res.json()
+					const providers = data.providers || []
+
+					// Populate provider select
+					providerSelect.innerHTML = providers
+						.map(
+							(provider) =>
+								`<option value="${provider.id}">${provider.name}</option>`
+						)
+						.join('')
+
+					// Set default provider from localStorage or default to first
+					const savedProvider =
+						localStorage.getItem('selectedProvider')
+					if (
+						savedProvider &&
+						providers.some((p) => p.id === savedProvider)
+					) {
+						providerSelect.value = savedProvider
+					} else if (providers.length > 0) {
+						providerSelect.value = providers[0].id
+					}
+
+					// Add change event listener
+					providerSelect.addEventListener('change', () => {
+						localStorage.setItem(
+							'selectedProvider',
+							providerSelect.value
+						)
+						loadVideo()
+					})
+
+					// Load video with selected provider
+					loadVideo()
+				} catch (err) {
+					console.error('Failed to load providers:', err)
+					providerSelect.innerHTML =
+						'<option value="vidsrc">Error loading providers</option>'
+					providerSelect.value = 'vidsrc'
+					loadVideo()
+				}
+			}
+
+			async function loadVideo() {
+				try {
+					const provider = providerSelect.value || 'vidsrc'
+					const loadingIndicator = document.getElementById('loadingIndicator')
+					const loadingOverlay = document.getElementById('loadingOverlay')
+
+					// Show loading state
+					loadingIndicator.classList.remove('hidden')
+					loadingOverlay.classList.remove('hidden')
+					videoFrame.classList.remove('loaded')
+					videoFrame.classList.add('loading')
+					videoMessage.classList.add('hidden')
+
+					const separator = sourceEndpoint.includes('?') ? '&' : '?'
+					const url = sourceEndpoint + `${separator}provider=${encodeURIComponent(provider)}`
+					const res = await fetch(url)
+
+					if (!res.ok) {
+						loadingIndicator.classList.add('hidden')
+						loadingOverlay.classList.add('hidden')
+						videoMessage.classList.remove('hidden')
+						return
+					}
+
+					const payload = await res.json()
+					if (payload.ok && payload.url) {
+						videoFrame.src = payload.url
+						
+						// Hide loading overlay after a short delay for iframe to start loading
+						setTimeout(() => {
+							loadingOverlay.classList.add('hidden')
+							videoFrame.classList.remove('loading')
+							videoFrame.classList.add('loaded')
+							loadingIndicator.classList.add('hidden')
+						}, 1000)
+					} else {
+						loadingIndicator.classList.add('hidden')
+						loadingOverlay.classList.add('hidden')
+						videoMessage.classList.remove('hidden')
+					}
+				} catch (err) {
+					console.error('Failed to load video:', err)
+					document.getElementById('loadingIndicator').classList.add('hidden')
+					document.getElementById('loadingOverlay').classList.add('hidden')
+					videoMessage.classList.remove('hidden')
+				}
+			}
+
+			// Initialize on page load
+			loadProviders()
+		</script>
+	</body>
+</html>

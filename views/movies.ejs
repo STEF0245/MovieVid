@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieVid - Movies</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link href="/css/tailwind.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-900 text-white">
+
+    <!-- Navbar -->
+    <%- include('components/NavBar') %>
+
+        <main class="pt-24 pb-12 px-4">
+            <%- include('components/TitleGrid', { titles: movies }) %>
+        </main>
+    <%- include('components/Footer') %>
+</body>
+
+</html>

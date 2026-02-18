@@ -1,0 +1,7 @@
+<section>
+    <div class="grid gap-4" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+        <% titles.forEach(title => { %>
+            <%- include('MovieCard', { title }) %>
+        <% }) %>
+    </div>
+</section>

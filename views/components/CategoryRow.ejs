@@ -1,0 +1,13 @@
+<section>
+    <h2 class="text-2xl font-semibold mb-4 text-blue-400">
+        <%= categoryName %>
+    </h2>
+
+    <div class="flex overflow-x-auto px-1 py-2 -mx-1">
+        <div class="flex space-x-4 overflow-x-visible">
+            <% titles.forEach(title=> { %>
+                <%- include('MovieCard', { movie: title }) %>
+                    <% }) %>
+        </div>
+    </div>
+</section>

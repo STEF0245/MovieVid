@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+		<title>MovieVid - 404 Not Found</title>
+		<link href="/css/tailwind.css" rel="stylesheet" />
+	</head>
+
+	<body class="bg-gray-900 text-white flex flex-col min-h-screen">
+		<!-- Navbar -->
+		<%- include('components/NavBar') %>
+
+		<!-- Main Content -->
+		<main
+			class="flex-grow flex items-center justify-center px-6 pt-24 pb-16"
+		>
+			<div
+				class="bg-gray-800 p-10 rounded-2xl shadow-xl w-full max-w-md text-center"
+			>
+				<h1 class="text-6xl font-extrabold text-blue-500 mb-4">404</h1>
+
+				<h2 class="text-2xl font-semibold mb-3">Page Not Found</h2>
+
+				<p class="text-gray-400 mb-6">
+					Sorry, the page you're looking for doesn't exist or has been
+					moved.
+				</p>
+
+				<a
+					href="/"
+					class="inline-block bg-blue-600 px-6 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
+				>
+					Back to Home
+				</a>
+			</div>
+		</main>
+
+		<!-- Footer -->
+		<%- include('components/Footer') %>
+	</body>
+</html>

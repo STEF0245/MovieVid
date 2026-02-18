@@ -1,0 +1,31 @@
+{
+	"name": "movievid",
+	"description": "A movie streaming platform built with Node.js, Express, and Firebase.",
+	"author": "STEF0245",
+	"keywords": [
+		"movie",
+		"streaming",
+		"platform"
+	],
+	"version": "1.0.0",
+	"main": "src/server.js",
+	"type": "module",
+	"scripts": {
+		"start": "node src/server.js"
+	},
+	"license": "ISC",
+	"dependencies": {
+		"@tailwindcss/cli": "^4.1.18",
+		"body-parser": "^2.2.2",
+		"cookie-parser": "^1.4.7",
+		"cors": "^2.8.6",
+		"ejs": "^4.0.1",
+		"express": "^5.2.1",
+		"firebase": "^12.9.0",
+		"firebase-admin": "^13.6.1",
+		"node-fetch": "^3.3.2",
+		"path": "^0.12.7",
+		"sharp": "^0.34.5",
+		"tailwindcss": "^4.1.18"
+	}
+}
