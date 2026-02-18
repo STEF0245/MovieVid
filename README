@@ -1,0 +1,35 @@
+# MovieVid 🎬
+
+A full-stack movie and TV series streaming platform that aggregates content from multiple video providers with a sleek, modern interface.
+
+## ✨ Features
+
+- 🎥 **Multi-Provider Streaming** - Switch between VidSrc, Vidlink, and MultiEmbed for optimal playback
+- 🔐 **User Authentication** - Secure Firebase-based user management
+- 🎯 **TMDB Integration** - Rich movie and TV show metadata from The Movie Database
+- 📱 **Responsive Design** - Beautiful UI built with Tailwind CSS that works on all devices
+- ⚡ **Smart Caching** - Efficient caching system for faster load times
+- 🎭 **Genre Browsing** - Explore content by categories
+- 🔍 **Search Functionality** - Find your favorite movies and shows instantly
+- 💾 **Provider Preferences** - Your selected video source is saved for future sessions
+
+## 🛠️ Tech Stack
+
+- **Backend:** Node.js, Express 5
+- **Frontend:** EJS Templates, Tailwind CSS 4
+- **Authentication:** Firebase Admin SDK
+- **Database:** Firebase
+- **Image Processing:** Sharp
+- **API:** TMDB (The Movie Database)
+
+## 🚀 Getting Started
+
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Configure Firebase credentials
+4. Start the server: `npm start`
+5. Open `http://localhost:5000` in your browser
+
+## 📝 License
+
+ISC License - See LICENSE file for details
